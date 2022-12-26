@@ -8,12 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="SoulsFormats">
-        <HintPath>..\..\SoulsFormats\SoulsFormats\bin\Debug\netstandard2.1\SoulsFormats.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\SoulsFormats\SoulsFormats\SoulsFormats.csproj" />
     </ItemGroup>
 

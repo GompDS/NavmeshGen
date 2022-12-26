@@ -7,4 +7,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Reference Include="SoulsAssetPipeline">
+        <HintPath>Lib\SoulsAssetPipeline.dll</HintPath>
+      </Reference>
+      <Reference Include="SoulsFormats">
+        <HintPath>..\..\SoulsFormats\SoulsFormats\bin\Debug\netstandard2.1\SoulsFormats.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

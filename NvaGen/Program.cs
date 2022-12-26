@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using SoulsFormats;
+﻿using SoulsFormats;
 
 namespace NvaGen;
 
@@ -9,7 +8,7 @@ public class Program
     {
         if (!NVA.IsRead(args.FirstOrDefault(x => NVA.Is(x), ""), out NVA nva))
         {
-            throw new ArgumentException("No nva included in program arguments.");
+            nva = new NVA();
         }
 
         NVA nvaBackup = NVA.Read(args.FirstOrDefault(x => NVA.Is(x)));
@@ -23,7 +22,7 @@ public class Program
         {
             throw new ArgumentException("No msb included in program arguments.");
         }
-
+        
         foreach (BinderFile file in nvmhktbnd.Files.Where(x => 
                      nva.Navmeshes.All(y => y.ModelID != int.Parse(Path.GetFileName(x.Name)[13..19]))))
         {
@@ -63,11 +62,7 @@ public class Program
             }
             triangleCount = (int) br.ReadUInt32();
         }
-
-        Vector3 m39Position = new Vector3((float)135.906, (float)-325.76, (float)-874.356);
-        Vector3 m39Rotation = new Vector3(0, (float)-1.4189527, 0);
         
-
         foreach (MSB3.Part.Collision col in msb.Parts.Collisions.Where(x => int.Parse(x.ModelName[1..]) == model))
         {
             NVA.Navmesh navmesh = new()
@@ -75,8 +70,8 @@ public class Program
                 MapNodeCount = -1,
                 NameID = int.Parse($"{area}{block}{model:D6}"),
                 ModelID = model,
-                Position = new Vector3(),
-                Rotation = new Vector3(),
+                Position = col.Position,
+                Rotation = col.Rotation,
                 TriangleCount = triangleCount,
                 Unk4C = false
             };
@@ -84,35 +79,6 @@ public class Program
                 nva.Entries1.Add(new NVA.Entry1());
             }
             nva.Navmeshes.Add(navmesh);
-        }
-    }
-    
-    private static void AddTempNavMeshToNVA(int block, int area, NVA nva) {
-
-        /* Just add one Navmesh to each nva. Model and Name are not a string, so no '_0000' format, and we have to use a unique ID here. */
-        int nModelID = 0;
-        if (block == 8)
-            nModelID = 91;
-
-        if (int.TryParse($"{area}{block}{nModelID:D6}", out int id)) //This is just for testing so we don't go over int.MaxValue.
-        {
-            nva.Navmeshes.Add(new NVA.Navmesh() {
-                NameID = id,
-                ModelID = nModelID,
-                Position = block == 3 ? new Vector3(798, 3, -185) : new Vector3(), //new Vector3(716, 2, -514),// player.Position, //using player position, here. Change this to cell.center in loop.
-                TriangleCount = 1,
-                //Unk38 = 12399,
-                //Unk4C = true
-            });
-        }
-
-        //WriteTestNavMesh(nModelID, area, block);
-
-        /* There has to be an entry for each vertex in each navmesh in nav.Navmashes */
-        foreach (NVA.Navmesh navmesh in nva.Navmeshes) {
-            for (int j = 0; j < navmesh.TriangleCount; j++) {
-                nva.Entries1.Add(new NVA.Entry1());
-            }
         }
     }
 }

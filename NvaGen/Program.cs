@@ -8,8 +8,8 @@ public class Program
     public static void Main(string[] args)
     {
         string? nvaPath = args.FirstOrDefault(NVA.Is);
-        NVA nva = new();
-        NVA nvaBackup = new();
+        NVA nva = new(DCX.Type.DCX_DFLT_10000_44_9);
+        NVA nvaBackup = new(DCX.Type.DCX_DFLT_10000_44_9);
         if (File.Exists(nvaPath))
         {
             if (NVA.Is(nvaPath))
@@ -45,9 +45,9 @@ public class Program
         string nvaName = nvmhktbndPath.Replace("nvmhktbnd", "nva");
         if (!File.Exists($"{nvaName}.bak") && nvaPath != null)
         {
-            nvaBackup.Write($"{nvaName}.bak", DCX.Type.DCX_DFLT_10000_44_9);
+            nvaBackup.Write($"{nvaName}.bak");
         }
-        nva.Write($"{nvaName}", DCX.Type.DCX_DFLT_10000_44_9);
+        nva.Write($"{nvaName}");
     }
 
     private static void AddNavMeshToNva(int area, int block, int model, NVA nva, MSB3 msb, BND4 nvmhktbnd)

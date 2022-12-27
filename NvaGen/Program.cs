@@ -1,4 +1,5 @@
-﻿using SoulsFormats;
+﻿using System.Numerics;
+using SoulsFormats;
 
 namespace NvaGen;
 
@@ -7,12 +8,15 @@ public class Program
     public static void Main(string[] args)
     {
         string? nvaPath = args.FirstOrDefault(NVA.Is);
-        NVA nva = new();
-        NVA nvaBackup = new();
-        if (File.Exists(nvaPath) && NVA.Is(nvaPath))
+        NVA nva = new(DCX.Type.DCX_DFLT_10000_44_9);
+        NVA nvaBackup = new(DCX.Type.DCX_DFLT_10000_44_9);
+        if (File.Exists(nvaPath))
         {
-            nva = NVA.Read(nvaPath);
-            nvaBackup = NVA.Read(nvaPath);
+            if (NVA.Is(nvaPath))
+            {
+                nva = NVA.Read(nvaPath);
+                nvaBackup = NVA.Read(nvaPath);
+            }
         }
 
         string? nvmhktbndPath = args.FirstOrDefault(x => BND4.Is(x) && x.EndsWith("nvmhktbnd.dcx"));
@@ -76,8 +80,8 @@ public class Program
                 MapNodeCount = -1,
                 NameID = int.Parse($"{area}{block}{model:D6}"),
                 ModelID = model,
-                Position = col.Position,
-                Rotation = col.Rotation,
+                Position = new Vector3(),//col.Position,
+                Rotation = new Vector3(),//col.Rotation,
                 TriangleCount = triangleCount,
                 Unk4C = false
             };

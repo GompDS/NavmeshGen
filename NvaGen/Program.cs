@@ -6,23 +6,29 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        if (!NVA.IsRead(args.FirstOrDefault(x => NVA.Is(x), ""), out NVA nva))
+        string? nvaPath = args.FirstOrDefault(NVA.Is);
+        NVA nva = new();
+        NVA nvaBackup = new();
+        if (File.Exists(nvaPath) && NVA.Is(nvaPath))
         {
-            nva = new NVA();
+            nva = NVA.Read(nvaPath);
+            nvaBackup = NVA.Read(nvaPath);
         }
 
-        NVA nvaBackup = NVA.Read(args.FirstOrDefault(x => NVA.Is(x)));
-        
-        if (!BND4.IsRead(args.FirstOrDefault(x => x.EndsWith("nvmhktbnd.dcx"), ""), out BND4 nvmhktbnd))
+        string? nvmhktbndPath = args.FirstOrDefault(x => BND4.Is(x) && x.EndsWith("nvmhktbnd.dcx"));
+        if (nvmhktbndPath == null)
         {
             throw new ArgumentException("No nvmhktbnd included in program arguments.");
         }
+        BND4 nvmhktbnd = BND4.Read(nvmhktbndPath);
         
-        if (!MSB3.IsRead(args.FirstOrDefault(x => MSB3.Is(x), ""), out MSB3 msb))
+        string? msbPath = args.FirstOrDefault(MSB3.Is);
+        if (msbPath == null)
         {
             throw new ArgumentException("No msb included in program arguments.");
         }
-        
+        MSB3 msb = MSB3.Read(msbPath);
+
         foreach (BinderFile file in nvmhktbnd.Files.Where(x => 
                      nva.Navmeshes.All(y => y.ModelID != int.Parse(Path.GetFileName(x.Name)[13..19]))))
         {
@@ -32,8 +38,8 @@ public class Program
             AddNavMeshToNva(area, block, model, nva, msb, nvmhktbnd);
         }
         
-        string nvaName = args.FirstOrDefault(x => NVA.Is(x), "");
-        if (!File.Exists($"{nvaName}.bak"))
+        string nvaName = nvmhktbndPath.Replace("nvmhktbnd", "nva");
+        if (!File.Exists($"{nvaName}.bak") && nvaPath != null)
         {
             nvaBackup.Write($"{nvaName}.bak");
         }
